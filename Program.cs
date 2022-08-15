@@ -9,7 +9,7 @@ namespace Belhard_02
             Check();
         }
 
-        private static void Check()
+        public static void Check()
         {
             /*Программа принимает на вход число и пытается преобразовать его в тип long,
             если срабатывает исключение переполнения, то пытается преобразовать в тип ulong,
@@ -47,6 +47,9 @@ namespace Belhard_02
                 }
             }
 
+            CheckNumber(number);
+
+            /*
             // Проверка на byte
             if (number >= byte.MinValue && number <= byte.MaxValue)
             {
@@ -115,6 +118,73 @@ namespace Belhard_02
             else
             {
                 System.Console.WriteLine($"Чтобы преобразовать число {number} в тип ulong, оно должно быть меньше или равно {UInt64.MaxValue} и больше или равно {UInt64.MinValue}");
+            }
+            public delegate ValueType ConvertTo(dynamic number);
+            Dictionary<Type, ConvertTo> people = new Dictionary<Type, ConvertTo>();
+
+            */
+        }
+
+        public static void CheckNumber(dynamic number)
+        {            
+            Type[] integerTypes = new Type[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(ulong) };
+            
+            foreach (Type t in integerTypes)
+            {
+                dynamic maxValue = t.GetField("MaxValue")?.GetValue(null);
+                dynamic minValue = t.GetField("MinValue")?.GetValue(null);
+
+                dynamic dNumber = null;
+
+
+                if (t != typeof(ulong))
+                {
+                    if (number >= minValue && number <= maxValue)
+                    {
+
+                        if (t == typeof(byte))
+                        {
+                            dNumber = Convert.ToByte(number);
+                        }
+                        else if (t == typeof(sbyte))
+                        {
+                            dNumber = Convert.ToSByte(number);
+                        }
+                        else if (t == typeof(short))
+                        {
+                            dNumber = Convert.ToInt16(number);
+                        }
+                        else if (t == typeof(ushort))
+                        {
+                            dNumber = Convert.ToUInt16(number);
+                        }
+                        else if (t == typeof(int))
+                        {
+                            dNumber = Convert.ToInt32(number);
+                        }
+                        else if (t == typeof(uint))
+                        {
+                            dNumber = Convert.ToUInt32(number);
+                        }
+
+                        System.Console.WriteLine($"Преобразование в {t.Name}: {dNumber}");
+                    }
+                    else
+                    {
+                        System.Console.WriteLine($"Чтобы преобразовать число {number} в тип {t.Name}, оно должно быть больше или равно {minValue} и меньше или равно {maxValue}");
+                    }
+                }
+                else
+                {
+                    if (number >= 0)
+                    {
+                        System.Console.WriteLine($"Преобразование в {t.Name}: {Convert.ToUInt64(number)}");
+                    }
+                    else
+                    {
+                        System.Console.WriteLine($"Чтобы преобразовать число {number} в тип {t.Name}, оно должно быть больше или равно {minValue} и меньше или равно {maxValue}");
+                    }
+                }
             }
         }
     }
